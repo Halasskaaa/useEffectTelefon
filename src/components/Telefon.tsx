@@ -1,26 +1,16 @@
 import { useEffect, useState } from "react";
+import type { TelefonTipus } from "../types/telefonTipus";
 
 function Telefon() {
     const URL = "phones.json";
 
-    type Telefon = {
-        id: number;
-        nev: string
-        gyarto: string;
-        ar: number;
-        memoria: number;
-        tarhely: number;
-        kijelzo: number;
-        operaciosRendszer: string;
-    };
-
-    const [telefonok, setTelefonok] = useState<Telefon[]>([]);
+    const [telefonok, setTelefonok] = useState<TelefonTipus[]>([]);
 
     useEffect(() => {
         async function adatokBetoltese() {
             try {
                 const response = await fetch(URL);
-                const adatok: Telefon[] = await response.json();
+                const adatok: TelefonTipus[] = await response.json();
                 setTelefonok(adatok);
             } catch (error) {
                 console.error("Hiba történt az adatok betöltésekor:", error);
