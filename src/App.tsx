@@ -1,28 +1,41 @@
 import { useEffect, useState } from "react";
-import TelefonMuveletek from "./components/phoneActions";
 import Telefon from "./components/Telefon";
 import type { TelefonTipus } from "./types/telefonTipus";
+import TelefonMuveletek from "./components/phoneActions";
 
 function App() {
-  
+
   const [telefonok, setTelefonok] = useState<TelefonTipus[]>([]);
-  const [isDesc, setIsDesc] = useState<boolean>(true);
+  const [betoltes, setBetoltes] = useState<boolean>(true);
+  const [novekvo, setNovekvo] = useState<boolean>(true);
 
   useEffect(() => {
-    const sortedTelefonok = [...telefonok].sort((a, b) => {
-      if (isDesc) {
-        return a.ar - b.ar; // Növekvő sorrend
-      } else {
-        return b.ar - a.ar; // Csökkenő sorrend
-      }
-    });
-    setTelefonok(sortedTelefonok);
-  }, [isDesc]);
+    fetch("./phones.json")
+      .then(response => response.json())
+      .then(data => setTelefonok(data))
+      .finally(() => setBetoltes(false))
+  }, []);
+
+  const rendezettTelefonok = [...telefonok].sort((a, b) => {
+    if (novekvo) {
+      return a.nev.localeCompare(b.nev);
+    } else {
+      return b.nev.localeCompare(a.nev);
+    }
+  })
 
   return (
     <>
-    <Telefon></Telefon>
-    <TelefonMuveletek telefonok={telefonok} setTelefonok={setTelefonok} isDesc={isDesc} setIsDesc={setIsDesc} />
+      {betoltes ? (
+        <p>Adatok betöltése...</p>
+      ) : (
+        <Telefon telefonok={rendezettTelefonok} />
+      )}
+
+      <TelefonMuveletek
+        novekvo={novekvo}
+        setNovekvo={setNovekvo}
+      />
     </>
   )
 }
